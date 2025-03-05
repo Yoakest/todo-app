@@ -30,12 +30,15 @@ git clone https://github.com/kullaniciadi/proje-adi.git
 Backend ve Frontend farklı terminallerde çalıştırılmalıdır.
 
 Backend Kurulumu
+```bash
 cd server
 npm install
 nodemon index.js
+```
 
 Frontend Kurulumu
+```bash
 cd client
 npm install
 npm start
-
+```
