@@ -1,133 +1,140 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 function App() {
   const [todos, setTodos] = useState([]);
-
-  useEffect(() => {
-    // API'den görevleri almak için GET isteği gönderiyoruz
-    axios.get('http://localhost:3001/api/todos')
-      .then((response) => {
-        const res = response.data;
-        console.log(res);
-        setTodos(res);
-      })
-      .catch((error) => {
-        console.error('Görevler alınırken hata oluştu:', error);
-      });
-  }, []); // Bileşen ilk yüklendiğinde çalışacak
-
+  const [title, setTitle] = useState('');
+  const [editId, setEditId] = useState(null);
   const [editTitle, setEditTitle] = useState('');
-  const [editingId, setEditingId] = useState(null);
 
-  const startEdit = (todo) => {
-    setEditTitle(todo.title);
-    setEditingId(todo.id);
+  // Başlangıçta görevleri al
+  useEffect(() => {
+    axios.get('http://localhost:3001/api/todos')
+      .then(response => setTodos(response.data))
+      .catch(error => console.error('Görevler alınırken hata:', error));
+  }, []);
+
+  // Yeni görev ekleme
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.post('http://localhost:3001/api/todos', { title, completed: false });
+      setTodos([...todos, response.data]);
+      setTitle('');
+    } catch (error) {
+      console.error('Görev oluşturulurken hata:', error);
+    }
   };
 
-  const updateTodo = async () => {
+  // Görev silme
+  const handleDelete = async (id) => {
     try {
-      const updatedTodo = await axios.put(`http://localhost:3001/api/todos/${editingId}`, {
-        title: editTitle
-      });
-      setTodos(todos.map(todo => todo.id === editingId ? updatedTodo.data : todo));
-      setEditingId(null);
+      await axios.delete(`http://localhost:3001/api/todos/${id}`);
+      setTodos(todos.filter(todo => todo.id !== id));
+    } catch (error) {
+      console.error('Görev silinirken hata:', error);
+    }
+  };
+
+  // Düzenleme moduna geçme
+  const handleEdit = (todo) => {
+    setEditId(todo.id);
+    setEditTitle(todo.title);
+  };
+
+  // Düzenlenmiş görevi güncelleme
+  const handleUpdate = async () => {
+    try {
+      const response = await axios.put(`http://localhost:3001/api/todos/${editId}`, { title: editTitle });
+      setTodos(todos.map(todo => todo.id === editId ? response.data : todo));
+      setEditId(null);
       setEditTitle('');
     } catch (error) {
       console.error('Görev güncellenirken hata:', error);
     }
   };
 
-  const deleteTodo = async (id) => {
+  // Görevin tamamlanma durumunu değiştirme (toggle)
+  const toggleCompleted = async (todo) => {
     try {
-      await axios.delete(`http://localhost:3001/api/todos/${id}`);
-      setTodos(todos.filter((todo) => todo.id !== id));  // Silinen görevi listeden çıkar
-    } catch (error) {
-      console.error('Görev silinirken hata:', error);
-    }
-  };
-
-  const [title, setTitle] = useState('');
-  const [completed, setCompleted] = useState(false);  // Varsayılan olarak false
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    try {
-      const response = await axios.post('http://localhost:3001/api/todos', { title, completed });
-      console.log('Yeni görev oluşturuldu:', response.data);
-      // Yeni görev ekledikten sonra listeyi güncelle
-      setTodos([...todos, response.data]); // Güncel todos dizisini ekler
-      setTitle('');  // Formu sıfırla
-      setCompleted(false);  // Varsayılan olarak false yap
-    } catch (error) {
-      console.error('Görev oluşturulurken hata oluştu:', error);
-    }
-  };
-
-  const toggleCompleted = async (id, currentStatus) => {
-    try {
-      const updatedStatus = !currentStatus; // Eğer mevcut durum false ise true, true ise false olacak
-      const updatedTodo = await axios.put(`http://localhost:3001/api/todos/${id}`, {
-        completed: updatedStatus
+      const updatedTodo = await axios.put(`http://localhost:3001/api/todos/${todo.id}`, {
+        title: todo.title,          // title'ı koruyoruz
+        completed: !todo.completed  // mevcut durumun tersini gönderiyoruz
       });
-      setTodos(todos.map(todo => todo.id === id ? updatedTodo.data : todo));
+      setTodos(todos.map(t => t.id === todo.id ? updatedTodo.data : t));
     } catch (error) {
-      console.error('Görev durumu güncellenirken hata oluştu:', error);
+      console.error('Görev durumu güncellenirken hata:', error);
     }
   };
 
   return (
-    <div className="App">
-      <h1>To-Do Uygulaması</h1>
-      <form onSubmit={handleSubmit}>
-        <label>
-          Görev Adı:
+    <div className="container py-5">
+      <h1 className="text-center mb-4">To-Do Uygulaması</h1>
+
+      {/* Görev ekleme formu */}
+      <div className="card p-4 mb-4 shadow-sm">
+        <form onSubmit={handleSubmit} className="d-flex">
           <input
             type="text"
+            className="form-control me-2"
+            placeholder="Yeni görev ekle..."
             value={title}
-            onChange={(e) => setTitle(e.target.value)}
+            onChange={e => setTitle(e.target.value)}
             required
           />
-        </label>
-        <button type="submit">Görevi Ekle</button>
-      </form>
-      <ul>
-        {todos.map((todo) => (
-          <li key={todo.id}>
-            {editingId === todo.id ? (
+          <button type="submit" className="btn btn-primary">Ekle</button>
+        </form>
+      </div>
+
+      {/* Görev listesi */}
+      <ul className="list-group">
+        {todos.map(todo => (
+          <li key={todo.id} className="list-group-item d-flex justify-content-between align-items-center" style={{ backgroundColor: todo.completed ? '#c8ffa4' : '' }}>
+            <div className="d-flex align-items-center">
+              {/* Check box ile tamamlanma durumu */}
               <input
-                type="text"
-                value={editTitle}
-                onChange={(e) => setEditTitle(e.target.value)}
+                type="checkbox"
+                className="form-check-input me-2"
+                style={{ backgroundColor: todo.completed ? '#3c9800' : '#f9e79f' }}
+                checked={todo.completed}
+                onChange={() => toggleCompleted(todo)}
               />
-            ) : (
-              <span>{todo.title}</span>
-            )}
-
-            {/* Checkbox ekleniyor */}
-            <input
-              type="checkbox"
-              checked={todo.completed}
-              onChange={() => toggleCompleted(todo.id, todo.completed)}
-            />
-            <button onClick={() => toggleCompleted(todo.id, todo.completed)}>
-              {todo.completed ? 'Tamamlandı' : 'Tamamla'}
-            </button>
-
-
-
+              {editId === todo.id ? (
+                <input
+                  type="text"
+                  className="form-control me-2"
+                  value={editTitle}
+                  onChange={e => setEditTitle(e.target.value)}
+                />
+              ) : (
+                <span style={{ textDecoration: todo.completed ? 'line-through' : 'none' }}>
+                  {todo.title}
+                </span>
+              )}
+            </div>
             <div className="todo-actions">
-              <button onClick={() => deleteTodo(todo.id)}>Sil</button>
-              <button onClick={() => startEdit(todo)}>Düzenle</button>
-              {editingId === todo.id && <button onClick={updateTodo}>Güncelle</button>}
+              {editId === todo.id ? (
+                <>
+                  <button className="btn btn-success btn-sm me-2" onClick={handleUpdate}>Güncelle</button>
+                  <button
+                    className="btn btn-secondary btn-sm me-2"
+                    onClick={() => { setEditId(null); setEditTitle(''); }}>
+                    İptal
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button className="btn btn-warning btn-sm me-2" onClick={() => handleEdit(todo)}>Düzenle</button>
+                  <button className="btn btn-danger btn-sm" onClick={() => handleDelete(todo.id)}>Sil</button>
+                </>
+              )}
             </div>
           </li>
         ))}
       </ul>
     </div>
   );
-
 }
 
 export default App;
