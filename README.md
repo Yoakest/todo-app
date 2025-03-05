@@ -19,7 +19,7 @@ Bu proje, kullanıcıların görevlerini (todo) takip etmelerini sağlayan basit
 
 ## Kurulum
 
-### 1. Projeyi Çekme
+### Projeyi Çekme
 
 GitHub reposunu bilgisayarınıza klonlayın:
 
@@ -29,14 +29,14 @@ git clone https://github.com/kullaniciadi/proje-adi.git
 
 Backend ve Frontend farklı terminallerde çalıştırılmalıdır.
 
-Backend Kurulumu
+**Backend Kurulumu**
 ```bash
 cd server
 npm install
 nodemon index.js
 ```
 
-Frontend Kurulumu
+**Frontend Kurulumu**
 ```bash
 cd client
 npm install
