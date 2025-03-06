@@ -6,7 +6,7 @@ Bu proje, kullanıcıların görevlerini (todo) takip etmelerini sağlayan basit
 
 - **Frontend:** React, Bootsrap
 - **Backend:** Node.js, Express
-- **Veritabanı:** MySQL (veya tercih ettiğiniz veritabanı)
+- **Veritabanı:** MySQL
 - **API İletişimi:** Axios (Frontend - Backend)
 
 ## Özellikler
