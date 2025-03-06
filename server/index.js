@@ -10,15 +10,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Veritabanı ile senkronize et
-sequelize.sync().then(() => {
-    console.log('Veritabanı senkronize edildi!');
-}).catch((error) => {
-    console.error('Veritabanı senkronizasyon hatası:', error);
-});
-
 app.get('/api/todos', async (req, res) => {
-    console.log("aaaaaaa")
     try {
         const todos = await Todo.findAll();
         res.json(todos);
@@ -34,57 +26,62 @@ app.post('/api/todos', async (req, res) => {
     try {
         const newTodo = await Todo.create({
             title,
-            completed: completed || false,  // Eğer `completed` verilmemişse, varsayılan olarak false
+            completed: completed || false,
         });
 
         res.status(201).json(newTodo);  // Başarıyla oluşturulan Todo'yu döndür
     } catch (error) {
-        res.status(500).json({ message: 'Görev oluşturulurken hata oluştu!', error });
+        res.status(500).json({ message: 'Todo oluşturulurken hata', error });
     }
 });
 
 app.delete('/api/todos/:id', async (req, res) => {
     const { id } = req.params;
-    console.log(id)
     try {
         const result = await Todo.destroy({
             where: { id }
         });
 
         if (result) {
-            res.status(200).json({ message: 'Görev başarıyla silindi!' });
+            res.status(200).json({ message: 'Todo başarıyla silindi!' });
         } else {
-            res.status(404).json({ message: 'Görev bulunamadı!' });
+            res.status(404).json({ message: 'Todo bulunamadı!' });
         }
     } catch (error) {
-        res.status(500).json({ message: 'Silme işlemi sırasında bir hata oluştu!', error });
+        res.status(500).json({ message: 'Silme işlemi sırasında bir hata', error });
     }
 });
 
 app.put('/api/todos/:id', async (req, res) => {
     const { id } = req.params;
     const { title, completed } = req.body;
-    const completedDate = completed ? new Date().toLocaleString() : null;
-
-    console.log(completedDate)
-
+    
     try {
-        const [updated] = await Todo.update({ title, completed, completed_date: completedDate }, {
-            where: { id }
-        });
-        console.log(updated)
-        if (updated) {
-            const updatedTodo = await Todo.findByPk(id);
-            res.status(200).json(updatedTodo);
-            console.log(updatedTodo)
-
-        } else {
-            res.status(404).json({ message: 'Görev bulunamadı!' });
+        const todo = await Todo.findByPk(id);
+        
+        if (!todo) {
+            return res.status(404).json({ message: 'Görev bulunamadı!' });
         }
+        
+        const updateData = {};
+        
+        if (title !== undefined) {
+            updateData.title = title;
+        }
+        
+        if (completed !== undefined) {
+            updateData.completed = completed;
+            updateData.completed_date = completed ? new Date().toLocaleString() : null;
+        }
+        
+        await todo.update(updateData);
+        
+        res.status(200).json(todo);
+        
     } catch (error) {
-        res.status(500).json({ message: 'Güncelleme işlemi sırasında bir hata oluştu!', error });
+        console.error('Güncelleme hatası:', error);
+        res.status(500).json({ message: 'Güncelleme işlemi sırasında bir hata oluştu!', error: error.message });
     }
-
 });
 
 

@@ -1,5 +1,5 @@
 const { DataTypes } = require('sequelize');
-const sequelize = require('../config/database'); // Sequelize bağlantısı
+const sequelize = require('../config/database');
 
 const Todo = sequelize.define('Todo', {
   title: {

@@ -12,7 +12,7 @@ async function createDatabase() {
   });
 
   await connection.query(`CREATE DATABASE IF NOT EXISTS \`${process.env.DB_NAME}\`;`);
-  console.log('Veritabanı başarıyla kontrol edildi veya oluşturuldu.');
+  console.log('Veritabanı kontrol edildi veya oluşturuldu.');
   await connection.end();
 }
 
@@ -25,10 +25,10 @@ const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER, proces
   try {
     await createDatabase();
     await sequelize.authenticate();
-    console.log('MySQL veritabanına başarıyla bağlanıldı.');
+    console.log('MySQL veritabanına bağlanıldı.');
 
     await sequelize.sync({ alter: true });
-    console.log('Tablolar başarıyla senkronize edildi.');
+    console.log('Tablolar senkronize edildi.');
   } catch (error) {
     console.error('Veritabanı hatası:', error);
   }

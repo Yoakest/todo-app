@@ -60,7 +60,7 @@ function App() {
   const toggleCompleted = async (todo) => {
     try {
       const updatedTodo = await axios.put(`http://localhost:3001/api/todos/${todo.id}`, {
-        title: todo.title,          // title'ı koruyoruz
+        // title: todo.title,          // title'ı koruyoruz
         completed: !todo.completed  // mevcut durumun tersini gönderiyoruz
       });
       setTodos(todos.map(t => t.id === todo.id ? updatedTodo.data : t));
