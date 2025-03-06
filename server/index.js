@@ -1,5 +1,4 @@
 const express = require('express');
-const mysql = require('mysql2');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const sequelize = require('./config/database');
@@ -19,6 +18,7 @@ sequelize.sync().then(() => {
 });
 
 app.get('/api/todos', async (req, res) => {
+    console.log("aaaaaaa")
     try {
         const todos = await Todo.findAll();
         res.json(todos);
@@ -64,21 +64,27 @@ app.delete('/api/todos/:id', async (req, res) => {
 app.put('/api/todos/:id', async (req, res) => {
     const { id } = req.params;
     const { title, completed } = req.body;
+    const completedDate = completed ? new Date().toLocaleString() : null;
+
+    console.log(completedDate)
 
     try {
-        const [updated] = await Todo.update({ title, completed }, {
+        const [updated] = await Todo.update({ title, completed, completed_date: completedDate }, {
             where: { id }
         });
-
+        console.log(updated)
         if (updated) {
             const updatedTodo = await Todo.findByPk(id);
             res.status(200).json(updatedTodo);
+            console.log(updatedTodo)
+
         } else {
             res.status(404).json({ message: 'Görev bulunamadı!' });
         }
     } catch (error) {
         res.status(500).json({ message: 'Güncelleme işlemi sırasında bir hata oluştu!', error });
     }
+
 });
 
 

@@ -13,6 +13,7 @@ function App() {
     axios.get('http://localhost:3001/api/todos')
       .then(response => setTodos(response.data))
       .catch(error => console.error('Görevler alınırken hata:', error));
+    console.log([todos])
   }, []);
 
   // Yeni görev ekleme
@@ -70,7 +71,8 @@ function App() {
 
   return (
     <div className="container py-5">
-      <h1 className="text-center mb-4">To-Do Uygulaması</h1>
+      <h1 className="text-center mb-4" > <img className='mirror-horizontal' src="tutturu.png" width="60" height="60" />
+        Tutturu To-Do</h1>
 
       {/* Görev ekleme formu */}
       <div className="card p-4 mb-4 shadow-sm">
@@ -111,6 +113,10 @@ function App() {
                 <span style={{ textDecoration: todo.completed ? 'line-through' : 'none' }}>
                   {todo.title}
                 </span>
+
+              )}
+              {todo.completed && todo.completed_date && (
+                <small className="text-muted ms-2">Tamamlandı: {new Date(todo.completed_date).toLocaleString('tr-TR')}</small>
               )}
             </div>
             <div className="todo-actions">

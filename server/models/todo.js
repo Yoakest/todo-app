@@ -1,7 +1,6 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database'); // Sequelize bağlantısı
 
-
 const Todo = sequelize.define('Todo', {
   title: {
     type: DataTypes.STRING,
@@ -10,9 +9,13 @@ const Todo = sequelize.define('Todo', {
   completed: {
     type: DataTypes.BOOLEAN,
     defaultValue: false,
+  },
+  completed_date: {
+    type: DataTypes.STRING,
+    allowNull: true, // Tamamlanma tarihi isteğe bağlı olsun
   }
 }, {
-  timestamps: false, // createdAt ve updatedAt sütunları kullanılmaz
+  timestamps: false, // createdAt ve updatedAt kullanılmayacak
 });
 
 module.exports = Todo;

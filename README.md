@@ -4,7 +4,7 @@ Bu proje, kullanıcıların görevlerini (todo) takip etmelerini sağlayan basit
 
 ## Teknolojiler
 
-- **Frontend:** React
+- **Frontend:** React, Bootsrap
 - **Backend:** Node.js, Express
 - **Veritabanı:** MySQL (veya tercih ettiğiniz veritabanı)
 - **API İletişimi:** Axios (Frontend - Backend)
@@ -42,3 +42,6 @@ cd client
 npm install
 npm start
 ```
+
+**Database**
+.env dosyasının içindekikleri kendi veritabanınıza göre düzenlemeniz gerekmektedir.
