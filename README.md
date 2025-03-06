@@ -5,7 +5,7 @@ Bu proje, kullanıcıların görevlerini (todo) takip etmelerini sağlayan basit
 ## Teknolojiler
 
 - **Frontend:** React, Bootsrap
-- **Backend:** Node.js, Express
+- **Backend:** Node.js, Express, Sequelize, Dotenv
 - **Veritabanı:** MySQL
 - **API İletişimi:** Axios (Frontend - Backend)
 
