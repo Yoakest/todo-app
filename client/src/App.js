@@ -10,7 +10,7 @@ function App() {
 
   // Başlangıçta görevleri al
   useEffect(() => {
-    axios.get('http://localhost:3001/api/todos')
+    axios.get('http://192.168.1.110:3001/api/todos')
       .then(response => setTodos(response.data))
       .catch(error => console.error('Görevler alınırken hata:', error));
     console.log([todos])
@@ -20,7 +20,7 @@ function App() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:3001/api/todos', { title, completed: false });
+      const response = await axios.post('http://192.168.1.110:3001/api/todos', { title, completed: false });
       setTodos([...todos, response.data]);
       setTitle('');
     } catch (error) {
@@ -31,7 +31,7 @@ function App() {
   // Görev silme
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`http://localhost:3001/api/todos/${id}`);
+      await axios.delete(`http://192.168.1.110:3001/api/todos/${id}`);
       setTodos(todos.filter(todo => todo.id !== id));
     } catch (error) {
       console.error('Görev silinirken hata:', error);
@@ -47,7 +47,7 @@ function App() {
   // Düzenlenmiş görevi güncelleme
   const handleUpdate = async () => {
     try {
-      const response = await axios.put(`http://localhost:3001/api/todos/${editId}`, { title: editTitle });
+      const response = await axios.put(`http://192.168.1.110:3001/api/todos/${editId}`, { title: editTitle });
       setTodos(todos.map(todo => todo.id === editId ? response.data : todo));
       setEditId(null);
       setEditTitle('');
@@ -59,7 +59,7 @@ function App() {
   // Görevin tamamlanma durumunu değiştirme (toggle)
   const toggleCompleted = async (todo) => {
     try {
-      const updatedTodo = await axios.put(`http://localhost:3001/api/todos/${todo.id}`, {
+      const updatedTodo = await axios.put(`http://192.168.1.110:3001/api/todos/${todo.id}`, {
         // title: todo.title,          // title'ı koruyoruz
         completed: !todo.completed  // mevcut durumun tersini gönderiyoruz
       });
@@ -116,7 +116,7 @@ function App() {
 
               )}
               {todo.completed && todo.completed_date && (
-                <small className="text-muted ms-2">Tamamlandı: {new Date(todo.completed_date).toLocaleString('tr-TR')}</small>
+                <small className="text-muted ms-2">Tamamlandı: {todo.completed_date}</small>
               )}
             </div>
             <div className="todo-actions">

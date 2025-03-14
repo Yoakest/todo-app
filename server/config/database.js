@@ -16,9 +16,12 @@ async function createDatabase() {
   await connection.end();
 }
 
-const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER, process.env.DB_PASS, {
+const sequelize = new Sequelize({
+  username: process.env.DB_USER,
+  password: process.env.DB_PASS,
+  database: process.env.DB_NAME,
   host: process.env.DB_HOST,
-  dialect: process.env.DIALECT,
+  dialect: process.env.DIALECT
 });
 
 (async () => {
