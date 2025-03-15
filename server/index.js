@@ -1,8 +1,8 @@
 const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
-const sequelize = require('./config/database');
-const Todo = require('./models/todo.js'); // Todo modelini import et
+const sequelize = require('./src/config/database.js');
+const Todo = require('./src/models/todo.js'); // Todo modelini import et
 
 dotenv.config();
 
@@ -55,29 +55,29 @@ app.delete('/api/todos/:id', async (req, res) => {
 app.put('/api/todos/:id', async (req, res) => {
     const { id } = req.params;
     const { title, completed } = req.body;
-    
+
     try {
         const todo = await Todo.findByPk(id);
-        
+
         if (!todo) {
             return res.status(404).json({ message: 'Görev bulunamadı!' });
         }
-        
+
         const updateData = {};
-        
+
         if (title !== undefined) {
             updateData.title = title;
         }
-        
+
         if (completed !== undefined) {
             updateData.completed = completed;
             updateData.completed_date = completed ? new Date().toLocaleString() : null;
         }
-        
+
         await todo.update(updateData);
-        
+
         res.status(200).json(todo);
-        
+
     } catch (error) {
         console.error('Güncelleme hatası:', error);
         res.status(500).json({ message: 'Güncelleme işlemi sırasında bir hata oluştu!', error: error.message });
@@ -87,6 +87,6 @@ app.put('/api/todos/:id', async (req, res) => {
 
 
 const PORT = process.env.PORT || 3001;
-app.listen(PORT, () => {
+app.listen(PORT, "127.0.0.1", () => {
     console.log(`Server ${PORT} portunda çalışıyor.`);
 });

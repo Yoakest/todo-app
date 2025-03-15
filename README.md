@@ -15,7 +15,7 @@ Bu proje, kullanıcıların görevlerini (todo) takip etmelerini sağlayan basit
 - Yeni görev ekleme
 - Görevleri düzenleme
 - Görevleri silme
-- Görevlerin tamamlanma durumunu güncelleme (isteğe bağlı)
+- Görevlerin tamamlanma durumunu güncelleme
 
 ## Kurulum
 
@@ -33,7 +33,7 @@ Backend ve Frontend farklı terminallerde çalıştırılmalıdır.
 ```bash
 cd server
 npm install
-nodemon index.js
+npm start
 ```
 
 **Frontend Kurulumu**
